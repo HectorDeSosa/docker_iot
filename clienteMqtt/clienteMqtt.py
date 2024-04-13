@@ -7,24 +7,32 @@ env.read_env() #lee el archivo con las variables. por defecto .env
 
 logging.basicConfig(format='%(asctime)s - cliente mqtt - %(levelname)s:%(message)s', level=logging.INFO, datefmt='%d/%m/%Y %H:%M:%S')
 
-async def main():
+async def main(client):
+    
+    async with client.messages() as messages:
+        await client.subscribe(env("TOPICO1"))
+        await client.subscribe(env("TOPICO2"))
+        async for message in messages:
+            logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
+async def publicacion(client):
+    while True:
+        await client.publish(env("PUBLICAR"))
+        await asyncio.sleep(10)
+async def master():
     tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     tls_context.minimum_version = ssl.TLSVersion.TLSv1_2
     tls_context.maximum_version = ssl.TLSVersion.TLSv1_3
     tls_context.verify_mode = ssl.CERT_REQUIRED
     tls_context.check_hostname = True
     tls_context.load_default_certs()
-
+    
     async with Client(
         env("SERVIDOR"),
         protocol=ProtocolVersion.V31,
         port=8883,
         tls_context=tls_context,
     ) as client:
-        async with client.messages() as messages:
-            await client.subscribe("#")
-            async for message in messages:
-                logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
+        await asyncio.gather(main(client), publicacion(client))
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(master())
