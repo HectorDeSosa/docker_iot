@@ -6,7 +6,7 @@ services:
     environment:
       - TZ=America/Argentina/Buenos_Aires 
       - SERVIDOR=${SERVIDOR} #Se reemplazará por la env var SERVIDOR defineda en .env
-      - TOPICO=${TOPICO1}
-      - TOPICO=${TOPICO1}
-      - PUBLICA=${PUBLICAR}
+      - TOPICO1=${TOPICO1}
+      - TOPICO2=${TOPICO1}
+      - PUBLICAR=${PUBLICAR}
     restart: unless-stopped
