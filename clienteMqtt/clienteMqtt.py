@@ -17,7 +17,7 @@ async def main(client):
         await asyncio.sleep(5)
 async def publicacion(client):
     while True:
-        await client.publish(env("PUBLICAR"),"probando el topico de publicar")
+        await client.publish(env("PUBLICAR"),"probando el topico")
         await asyncio.sleep(10)
 async def master():
     tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
@@ -37,3 +37,9 @@ async def master():
 
 if __name__ == "__main__":
     asyncio.run(master())
+
+#docker image ls
+#clienteMqtt $ docker image rm nombre -f
+#docker build -t clientemqtt .
+#docker run --rm --name cliente_mqtt clientemqtt
+#docker-compose up --build
