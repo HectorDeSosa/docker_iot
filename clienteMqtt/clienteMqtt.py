@@ -17,7 +17,7 @@ async def main(client):
         await asyncio.sleep(5)
 async def publicacion(client):
     while True:
-        await client.publish(env("PUBLICAR"),"probando2")
+        await client.publish(env("PUBLICAR"))
         await asyncio.sleep(10)
 async def master():
     tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
