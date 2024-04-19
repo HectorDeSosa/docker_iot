@@ -1,9 +1,8 @@
 import asyncio, ssl, certifi, logging, os
 import aiomqtt
 
-cont=0
 #logging.getLogger(__name__)
-logging.basicConfig(format='%(name)s: %(asctime)s - cliente mqtt - %(levelname)s:%(message)s', level=logging.INFO, datefmt='%d/%m/%Y %H:%M:%S')
+logging.basicConfig(format='%(funcName)s: %(asctime)s - cliente mqtt - %(levelname)s:%(message)s', level=logging.INFO, datefmt='%d/%m/%Y %H:%M:%S')
 
 class Contador:
     def __init__(self):
@@ -14,7 +13,6 @@ class Contador:
         return self.__contador
 
 async def main(client):
-    global cont
     while True:
         async with client.messages() as messages:
             await client.subscribe(os.environ['TOPICO1'])
