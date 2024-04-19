@@ -56,6 +56,7 @@ async def main():
             tg.create_task(publicacion(client), name='publicacionn')
             tg.create_task(contador(),name='cont')
 
+
 if __name__ == "__main__":
     try:
         topico1 = asyncio.Queue()
