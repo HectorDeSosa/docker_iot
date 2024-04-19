@@ -46,6 +46,8 @@ if __name__ == "__main__":
         asyncio.run(master())
     except KeyboardInterrupt:
         pass
+
+
 #docker image ls
 #clienteMqtt $ docker image rm nombre -f
 #docker build -t clientemqtt .
