@@ -2,7 +2,7 @@ import asyncio, ssl, certifi, logging, os
 import aiomqtt
 
 #logging.getLogger(__name__)
-logging.basicConfig(format='%(funcName)s: %(asctime)s - cliente mqtt - %(levelname)s:%(message)s', level=logging.INFO, datefmt='%d/%m/%Y %H:%M:%S')
+logging.basicConfig(format='%(taskName)s: %(asctime)s - cliente mqtt - %(levelname)s:%(message)s', level=logging.INFO, datefmt='%d/%m/%Y %H:%M:%S')
 
 class Contador:
     def __init__(self):
@@ -12,20 +12,22 @@ class Contador:
     def obtener_valor(self):
         return self.__contador
 
-async def topico1(client):
+async def topico_uno():
     while True:
-        async with client.messages() as messages:
-            await client.subscribe(os.environ['TOPICO1'])
-            async for message in messages:
-                logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
-        await asyncio.sleep(3)
-async def topico2(client):
+        message = await topico1.get()
+        logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
+
+async def topico_dos():
     while True:
-        async with client.messages() as messages:
-            await client.subscribe(os.environ['TOPICO2'])
-            async for message in messages:
-                logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
-        await asyncio.sleep(3)
+        message = await topico2.get()
+        logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
+async def admin(client):
+    while True:
+        async for message in client.messages:
+            if message.topic.matches(os.environ['TOPICO1']):
+                topico1.put_nowait(message)
+            elif message.topic.matches(os.environ['TOPICO2']):
+                topico2.put_nowait(message)
 async def publicacion(client):
     while True:
         await client.publish(os.environ['PUBLICAR'],str(mi_contador.obtener_valor()))#aca publico el contador
@@ -34,7 +36,7 @@ async def contador():
     while True:
         mi_contador.incrementar()
         await asyncio.sleep(3)
-async def master():
+async def main():
     tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     tls_context.verify_mode = ssl.CERT_REQUIRED
     tls_context.check_hostname = True
@@ -45,9 +47,12 @@ async def master():
         port=8883,
         tls_context=tls_context,
     ) as client:
+        await client.subscribe(os.environ['TOPICO1'])
+        await client.subscribe(os.environ['TOPICO2'])
         async with asyncio.TaskGroup() as tg:
-            tg.create_task(topico1(client))
-            tg.create_task(topico2(client))
+            tg.create_task(admin(client))
+            tg.create_task(topico_uno())
+            tg.create_task(topico_dos())
             tg.create_task(publicacion(client), name='publicacionn')
             tg.create_task(contador(),name='cont')
 
@@ -56,7 +61,7 @@ if __name__ == "__main__":
         topico1 = asyncio.Queue()
         topico2 = asyncio.Queue()
         mi_contador = Contador()
-        asyncio.run(master())
+        asyncio.run(main())
     except KeyboardInterrupt:
         pass
 
