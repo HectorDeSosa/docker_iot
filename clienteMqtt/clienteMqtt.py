@@ -2,7 +2,7 @@ import asyncio, ssl, certifi, logging, os
 import aiomqtt
 
 #logging.getLogger(__name__)
-logging.basicConfig(format='%(taskName)s: %(asctime)s - cliente mqtt - %(levelname)s:%(message)s', level=logging.INFO, datefmt='%d/%m/%Y %H:%M:%S')
+logging.basicConfig(format='%(funcName)s: %(asctime)s - cliente mqtt - %(levelname)s:%(message)s', level=logging.INFO, datefmt='%d/%m/%Y %H:%M:%S')
 
 class Contador:
     def __init__(self):
@@ -12,14 +12,20 @@ class Contador:
     def obtener_valor(self):
         return self.__contador
 
-async def main(client):
+async def topico1(client):
     while True:
         async with client.messages() as messages:
             await client.subscribe(os.environ['TOPICO1'])
+            async for message in messages:
+                logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
+        await asyncio.sleep(3)
+async def topico2(client):
+    while True:
+        async with client.messages() as messages:
             await client.subscribe(os.environ['TOPICO2'])
             async for message in messages:
                 logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
-        await asyncio.sleep(5)
+        await asyncio.sleep(3)
 async def publicacion(client):
     while True:
         await client.publish(os.environ['PUBLICAR'],str(mi_contador.obtener_valor()))#aca publico el contador
@@ -39,12 +45,15 @@ async def master():
         tls_context=tls_context,
     ) as client:
         async with asyncio.TaskGroup() as tg:
-            tg.create_task(main(client), name='mainn')
+            tg.create_task(topico1(client))
+            tg.create_task(topico2(client))
             tg.create_task(publicacion(client), name='publicacionn')
             tg.create_task(contador(),name='cont')
 
 if __name__ == "__main__":
     try:
+        topico1 = asyncio.Queue()
+        topico2 = asyncio.Queue()
         mi_contador = Contador()
         asyncio.run(master())
     except KeyboardInterrupt:
