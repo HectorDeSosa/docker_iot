@@ -6,7 +6,7 @@ logging.basicConfig(format='%(funcName)s: %(asctime)s - cliente mqtt - %(levelna
 
 class Contador:
     def __init__(self):
-        self.__contador = 0 #doble gion bajo en privada
+        self.__contador = 0 #doble guion bajo privada
     def incrementar(self):
         self.__contador += 1
     def obtener_valor(self):
