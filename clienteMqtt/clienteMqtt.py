@@ -66,7 +66,7 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         pass
 
-
+#https://sbtinstruments.github.io/aiomqtt/subscribing-to-a-topic.html
 #docker image ls
 #clienteMqtt $ docker image rm nombre -f
 #docker build -t clientemqtt .
