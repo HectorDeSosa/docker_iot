@@ -39,6 +39,7 @@ async def master():
     tls_context.verify_mode = ssl.CERT_REQUIRED
     tls_context.check_hostname = True
     tls_context.load_default_certs()
+
     async with aiomqtt.Client(
         os.environ['SERVIDOR'],
         port=8883,
