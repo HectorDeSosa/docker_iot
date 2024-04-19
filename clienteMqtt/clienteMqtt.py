@@ -2,7 +2,7 @@ import asyncio, ssl, certifi, logging, os
 import aiomqtt
 
 #logging.getLogger(__name__)
-logging.basicConfig(format='%(funcName)s: %(asctime)s - cliente mqtt - %(levelname)s:%(message)s', level=logging.INFO, datefmt='%d/%m/%Y %H:%M:%S')
+logging.basicConfig(format='%(taskName)s: %(asctime)s - cliente mqtt - %(levelname)s:%(message)s', level=logging.INFO, datefmt='%d/%m/%Y %H:%M:%S')
 
 class Contador:
     def __init__(self):
