@@ -39,12 +39,9 @@ async def master():
         tls_context=tls_context,
     ) as client:
         async with asyncio.TaskGroup() as tg:
-            task_main=tg.create_task(main(client), name='mainn')
-            task_publica=tg.create_task(publicacion(client), name='publicacionn')
-            task_contador=tg.create_task(contador(),name='cont')
-            await task_main
-            await task_publica
-            await task_contador
+            tg.create_task(main(client), name='mainn')
+            tg.create_task(publicacion(client), name='publicacionn')
+            tg.create_task(contador(),name='cont')
 
 if __name__ == "__main__":
     try:

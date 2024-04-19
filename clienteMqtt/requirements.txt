@@ -1,3 +1,4 @@
 aiomqtt==2.0.1
 certifi==2024.2.2
 environs==11.0.0
+logging==3.12.3
