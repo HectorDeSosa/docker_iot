@@ -38,7 +38,13 @@ async def master():
         port=8883,
         tls_context=tls_context,
     ) as client:
-        await asyncio.gather(main(client), publicacion(client),contador())
+        async with asyncio.TaskGroup() as tg:
+            task_main=tg.create_task(main(client), name='mainn')
+            task_publica=tg.create_task(publicacion(client), name='publicacionn')
+            task_contador=tg.create_task(contador(),name='cont')
+            await task_main
+            await task_publica
+            await task_contador
 
 if __name__ == "__main__":
     try:
