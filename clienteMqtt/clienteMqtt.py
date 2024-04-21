@@ -1,7 +1,6 @@
 import asyncio, ssl, certifi, logging, os, sys
 import aiomqtt
 
-#logging.getLogger(__name__)
 logging.basicConfig(format='%(taskName)s: %(asctime)s - cliente mqtt - %(levelname)s:%(message)s', level=logging.INFO, datefmt='%d/%m/%Y %H:%M:%S')
 #funcName
 class Contador:
@@ -21,6 +20,7 @@ async def topico_dos():
     while True:
         message = await topico2.get()
         logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
+
 async def admin(client):
     while True:
         async for message in client.messages:
