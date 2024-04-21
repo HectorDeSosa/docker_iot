@@ -18,7 +18,7 @@ async def main():
         port=8883,
         tls_context=tls_context,
     ) as client:
-        await client.subscribe("#")
+        await client.subscribe(env("TOPICO1"))
         async for message in client.messages:
             logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
 
