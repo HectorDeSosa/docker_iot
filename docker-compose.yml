@@ -1,6 +1,7 @@
 version: "3"
 services:
   clientemqtt:
+    build: ./clienteMqtt/
     image: clientemqtt
     container_name: clientemqtt
     environment:
