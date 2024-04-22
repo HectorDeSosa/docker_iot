@@ -50,7 +50,9 @@ async def main():
     ) as client:
         await client.subscribe(os.environ['TOPICO1'])
         await client.subscribe(os.environ['TOPICO2'])
+        #Hice de dos formas, para probar y ambas funcionan. 
         task_1=asyncio.create_task(topico_uno(),name='task1')
+        #task_1.set_name('task1')
         task_2=asyncio.create_task(topico_dos(),name='task2')
         task_3=asyncio.create_task(admin(client))
         task_4=asyncio.create_task(publicacion(client),name='cont')
