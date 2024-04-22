@@ -2,7 +2,7 @@ import asyncio, ssl, certifi, logging, os, sys
 import aiomqtt
 
 logging.basicConfig(format='%(taskName)s: %(asctime)s - cliente mqtt - %(levelname)s:%(message)s', level=logging.INFO, datefmt='%d/%m/%Y %H:%M:%S')
-#funcName
+
 class Contador:
     def __init__(self):
         self.__contador = 0 #doble guion bajo privada
@@ -15,7 +15,7 @@ async def topico_uno():
     while True:
         message = await topico1.get()
         logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
-
+        
 async def topico_dos():
     while True:
         message = await topico2.get()
@@ -32,6 +32,7 @@ async def admin(client):
 async def publicacion(client):
     while True:
         await client.publish(os.environ['PUBLICAR'],str(mi_contador.obtener_valor()))#aca publico el contador
+        logging.info(os.environ['PUBLICAR']+': '+str(mi_contador.obtener_valor()))
         await asyncio.sleep(5)
 async def contador():
     while True:
@@ -55,8 +56,8 @@ async def main():
             tg.create_task(admin(client))
             tg.create_task(topico_uno(),name='topico_uno')
             tg.create_task(topico_dos(),name='topico_dos')
-            tg.create_task(publicacion(client), name='publicacionn')
-            tg.create_task(contador(),name='cont')
+            tg.create_task(publicacion(client))
+            tg.create_task(contador())
 
 
 if __name__ == "__main__":
@@ -68,7 +69,6 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         sys.exit(0)
 
-#https://sbtinstruments.github.io/aiomqtt/subscribing-to-a-topic.html
 #docker image ls
 #clienteMqtt $ docker image rm nombre -f
 #docker build -t clientemqtt .
