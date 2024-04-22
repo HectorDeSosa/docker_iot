@@ -70,7 +70,7 @@ if __name__ == "__main__":
         sys.exit(0)
 
 #docker image ls
-#clienteMqtt $ docker image rm nombre -f
+#clienteMqtt $ docker image rmi -f nombress 
 #docker build -t clientemqtt .
 #docker run --rm --name cliente_mqtt clientemqtt
 #docker-compose up --build
