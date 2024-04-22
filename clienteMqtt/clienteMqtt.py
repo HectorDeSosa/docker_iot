@@ -28,7 +28,6 @@ async def admin(client):
                 topico1.put_nowait(message)
             elif message.topic.matches(os.environ['TOPICO2']):
                 topico2.put_nowait(message)
-        await asyncio.sleep(2)
 async def publicacion(client):
     while True:
         await client.publish(os.environ['PUBLICAR'],str(mi_contador.obtener_valor()))#aca publico el contador
@@ -51,14 +50,20 @@ async def main():
     ) as client:
         await client.subscribe(os.environ['TOPICO1'])
         await client.subscribe(os.environ['TOPICO2'])
-        
+        task_1=asyncio.create_task(topico_uno(),name='task1')
+        task_2=asyncio.create_task(topico_dos(),name='task2')
+        task_3=asyncio.create_task(admin(client))
+        task_4=asyncio.create_task(publicacion(client),name='cont')
+        task_5=asyncio.create_task(contador())
+        await asyncio.gather(task_1,task_2,task_3,task_4,task_5)
+        """
         async with asyncio.TaskGroup() as tg:
             tg.create_task(admin(client))
             tg.create_task(topico_uno(),name='topico_uno')
             tg.create_task(topico_dos(),name='topico_dos')
             tg.create_task(publicacion(client))
             tg.create_task(contador())
-
+        """
 
 if __name__ == "__main__":
     try:
