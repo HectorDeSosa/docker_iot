@@ -66,12 +66,11 @@ async def main():
             tg.create_task(publicacion(client))
             tg.create_task(contador())
         """
-
+topico1 = asyncio.Queue()
+topico2 = asyncio.Queue()
+mi_contador = Contador()
 if __name__ == "__main__":
     try:
-        topico1 = asyncio.Queue()
-        topico2 = asyncio.Queue()
-        mi_contador = Contador()
         asyncio.run(main())
     except KeyboardInterrupt:
         sys.exit(0)
