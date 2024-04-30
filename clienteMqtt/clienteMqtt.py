@@ -18,7 +18,7 @@ async def main():
         async for message in client.messages:
             logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
             datos=json.loads(message.payload.decode('utf8'))
-            dispositivo=str(message.topic)#split('/')[2]
+            dispositivo=str(message.topic).split('/')[2]
             sql = "INSERT INTO `mediciones` (`sensor_id`, `temperatura`, `humedad`) VALUES (%s, %s, %s)"
             try:
                 conn = await aiomysql.connect(host=os.environ["MARIADB_SERVER"], port=3306,
