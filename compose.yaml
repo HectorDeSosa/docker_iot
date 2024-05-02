@@ -48,7 +48,7 @@ services:
       - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
       - ./mosquitto/config:/mosquitto/config
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana-oss
     container_name: grafana
     user: "1000"
     volumes:
