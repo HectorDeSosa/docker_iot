@@ -71,7 +71,7 @@ async def topicos(update: Update, context):
         #/setpoint 30.5 hola
         topic,msg=update.message.text.split(' ',1)
         if msg.split() != 1:
-            await context.bot.send_message(update.message.chat.id, text="datos incorrecto")
+            await context.bot.send_message(update.message.chat.id, text="datos incorrectos")
             return    
         if topic == "/setpoint":
             #condicion de que la temperatura sea mayor a -5°C
