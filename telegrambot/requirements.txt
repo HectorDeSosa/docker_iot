@@ -1,3 +1,4 @@
 python-telegram-bot==21.2
 aiomysql==0.2.0
 matplotlib==3.9.0
+aiomqtt==2.0.1
