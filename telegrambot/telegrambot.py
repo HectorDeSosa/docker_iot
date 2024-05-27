@@ -39,7 +39,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         async for message in client.messages:
             #ver si funciona
             await context.bot.send_message(update.message.chat.id, 
-            text=str(message.topic) + ": " + message.payload.decode("utf-8"))
+                text=str(message.topic) + ": " + message.payload.decode("utf-8"))
             #logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
 async def acercade(update: Update, context):
     await context.bot.send_message(update.message.chat.id, text="Este bot fue creado para el curso de IoT FIO")
@@ -54,7 +54,6 @@ async def kill(update: Update, context):
         await context.bot.send_message(update.message.chat.id, text="☠️ ¡¡¡Esto es muy peligroso!!! ☠️")
 """
 async def topicos(update: Update, context):
-    logging.info(context.args)
     tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     tls_context.verify_mode = ssl.CERT_REQUIRED
     tls_context.check_hostname = True
@@ -67,11 +66,18 @@ async def topicos(update: Update, context):
         tls_context=tls_context,
     ) as client:
         logging.info(context.args)
-        if update.message.text == "setpoint":
+        #con el formato /setpoint 30.5
+        #aca el problema es si pongo mas de 1 argumento
+        #/setpoint 30.5 hola
+        topic,msg=update.message.text.split()
+        if msg.split() !=1:
+            await context.bot.send_message(update.message.chat.id, text="datos incorrecto")
+            return    
+        if topic == "/setpoint":
             #condicion de que la temperatura sea mayor a -5°C
             #si se quiere se puede cambiar esta temperatura
             #seria un ejemplo
-            if float(context.args) and float(context.args[0]) > -5.0:
+            if float(msg) > -5.0:
                 client.publish("setpoint", str(context.args[0]))
                 await context.bot.send_message(update.message.chat.id, text="setpoint correcto")
             else:
