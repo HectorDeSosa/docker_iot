@@ -69,8 +69,8 @@ async def topicos(update: Update, context):
         #con el formato /setpoint 30.5
         #aca el problema es si pongo mas de 1 argumento
         #/setpoint 30.5 hola
-        topic,msg=update.message.text.split()
-        if msg.split() !=1:
+        topic,msg=update.message.text.split(' ',1)
+        if msg.split() != 1:
             await context.bot.send_message(update.message.chat.id, text="datos incorrecto")
             return    
         if topic == "/setpoint":
