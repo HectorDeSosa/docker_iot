@@ -78,7 +78,7 @@ async def topicos(update: Update, context):
             #si se quiere se puede cambiar esta temperatura
             #seria un ejemplo
             if float(msg) > -5.0:
-                client.publish("setpoint", str(context.args[0]))
+                client.publish("setpoint", msg)
                 await context.bot.send_message(update.message.chat.id, text="setpoint correcto")
             else:
                 await context.bot.send_message(update.message.chat.id, text="setpoint incorrecto")
