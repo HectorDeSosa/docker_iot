@@ -3,6 +3,8 @@ from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandl
 import logging, os, asyncio, aiomysql, traceback, locale
 import matplotlib.pyplot as plt
 from io import BytesIO
+import ssl, certifi, json, traceback
+import aiomqtt
 
 token=os.environ["TB_TOKEN"]
 
@@ -20,10 +22,28 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         apellido=""
     kb = [["temperatura"],["humedad"],["gráfico temperatura"],["gráfico humedad"]]
     await context.bot.send_message(update.message.chat.id, text="Bienvenido al Bot "+ nombre + " " + apellido,reply_markup=ReplyKeyboardMarkup(kb))
-
+    #una ves conectado estaria bueno que empiece arecibir todo lo que se publica 
+    #el el topico hector/#
+    tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+    tls_context.verify_mode = ssl.CERT_REQUIRED
+    tls_context.check_hostname = True
+    tls_context.load_default_certs()
+    async with aiomqtt.Client(
+        os.environ["SERVIDOR"],
+        username=os.environ["MQTT_USR"],
+        password=os.environ["MQTT_PASS"],
+        port=int(os.environ["PUERTO_MQTTS"]),
+        tls_context=tls_context,
+    ) as client:
+        await client.subscribe(os.environ['TOPICO'])
+        async for message in client.messages:
+            #ver si funciona
+            await context.bot.send_message(update.message.chat.id, 
+            text=str(message.topic) + ": " + message.payload.decode("utf-8"))
+            #logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
 async def acercade(update: Update, context):
     await context.bot.send_message(update.message.chat.id, text="Este bot fue creado para el curso de IoT FIO")
-
+"""
 async def kill(update: Update, context):
     logging.info(context.args)
     if context.args and context.args[0] == '@e':
@@ -32,7 +52,57 @@ async def kill(update: Update, context):
         await context.bot.send_message(update.message.chat.id, text="¡¡¡Ahora estan todos muertos!!!")
     else:
         await context.bot.send_message(update.message.chat.id, text="☠️ ¡¡¡Esto es muy peligroso!!! ☠️")
-        
+"""
+async def topicos(update: Update, context):
+    tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+    tls_context.verify_mode = ssl.CERT_REQUIRED
+    tls_context.check_hostname = True
+    tls_context.load_default_certs()
+    async with aiomqtt.Client(
+        os.environ["SERVIDOR"],
+        username=os.environ["MQTT_USR"],
+        password=os.environ["MQTT_PASS"],
+        port=int(os.environ["PUERTO_MQTTS"]),
+        tls_context=tls_context,
+    ) as client:
+        logging.info(context.args)
+        if update.message.text == "setpoint":
+            #condicion de que la temperatura sea mayor a -5°C
+            #si se quiere se puede cambiar esta temperatura
+            #seria un ejemplo
+            if float(context.args) and float(context.args[0]) > -5.0:
+                client.publish("setpoint", str(context.args[0]))
+                await context.bot.send_message(update.message.chat.id, text="setpoint correcto")
+            else:
+                await context.bot.send_message(update.message.chat.id, text="setpoint incorrecto")
+        elif update.message.text == "periodo":
+            #condicion de que el periodo sea mayor a cero
+            if float(context.args) and float(context.args[0]) > 0.0:
+                client.publish("periodo", str(context.args[0]))
+                await context.bot.send_message(update.message.chat.id, text="periodo correcto")
+            else:
+                await context.bot.send_message(update.message.chat.id, text="periodo incorrecto")
+        elif update.message.text == "modo":
+            #modo puede ser auto/manual
+            if context.args and context.args[0] in ["auto", "manual"]:
+                client.publish("modo", context.args[0])
+                await context.bot.send_message(update.message.chat.id, text="modo correcto")
+            else:
+                await context.bot.send_message(update.message.chat.id, text="modo incorrecto")
+        elif update.message.text == "destello":
+            if context.args and context.args[0] in ["ON", "OFF"]:
+                client.publish("destello", context.args[0])
+                await context.bot.send_message(update.message.chat.id, text="destello correcto")
+            else:
+                await context.bot.send_message(update.message.chat.id, text="destello incorrecto")  
+        elif update.message.text == "rele":
+            if context.args and context.args[0] in ["ON", "OFF"]:
+                client.publish("rele", context.args[0])
+                await context.bot.send_message(update.message.chat.id, text="estado de rele correcto")
+            else:
+                await context.bot.send_message(update.message.chat.id, text="estado de rele incorrecto")
+        else:
+            await context.bot.send_message(update.message.chat.id, text="Tópico Incorrecto")
 async def medicion(update: Update, context):
     logging.info(update.message.text)
     sql = f"SELECT timestamp, {update.message.text} FROM mediciones ORDER BY timestamp DESC LIMIT 1"
@@ -55,7 +125,7 @@ async def medicion(update: Update, context):
 
 async def graficos(update: Update, context):
     logging.info(update.message.text)
-    sql = f"SELECT timestamp, {update.message.text.split()[1]} FROM mediciones where id mod 2 = 0 AND timestamp >= '2024-05-16 16:09:21' - INTERVAL 1 DAY ORDER BY timestamp"
+    sql = f"SELECT timestamp, {update.message.text.split()[1]} FROM mediciones where id mod 2 = 0 AND timestamp >= '2024-03-16 16:09:00' - INTERVAL 1 DAY ORDER BY timestamp"
     conn = await aiomysql.connect(host=os.environ["MARIADB_SERVER"], port=3306,
                                     user=os.environ["MARIADB_USER"],
                                     password=os.environ["MARIADB_USER_PASS"],
@@ -83,7 +153,12 @@ def main():
     application = Application.builder().token(token).build()
     application.add_handler(CommandHandler('start', start))
     application.add_handler(CommandHandler('acercade', acercade))
-    application.add_handler(CommandHandler('kill', kill))
+    #application.add_handler(CommandHandler('kill', kill))
+    application.add_handler(CommandHandler('setpoint', topicos))
+    application.add_handler(CommandHandler('periodo', topicos))
+    application.add_handler(CommandHandler('modo', topicos))
+    application.add_handler(CommandHandler('destello', topicos))
+    application.add_handler(CommandHandler('rele', topicos))
     application.add_handler(MessageHandler(filters.Regex("^(temperatura|humedad)$"), medicion))
     application.add_handler(MessageHandler(filters.Regex("^(gráfico temperatura|gráfico humedad)$"), graficos))
     application.run_polling()
