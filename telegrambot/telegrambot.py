@@ -54,6 +54,7 @@ async def kill(update: Update, context):
         await context.bot.send_message(update.message.chat.id, text="☠️ ¡¡¡Esto es muy peligroso!!! ☠️")
 """
 async def topicos(update: Update, context):
+    logging.info(context.args)
     tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     tls_context.verify_mode = ssl.CERT_REQUIRED
     tls_context.check_hostname = True

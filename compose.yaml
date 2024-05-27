@@ -28,7 +28,7 @@ services:
     container_name: clientemqtt
     environment:
       - TZ=America/Argentina/Buenos_Aires 
-      - SERVIDOR=${SERVIDOR} #Se reemplazará por la env var SERVIDOR defineda en .env
+      - SERVIDOR=${SERVIDOR}
       - TOPICO=${TOPICO}
       - MARIADB_SERVER=${MARIADB_SERVER}
       - MARIADB_USER=${MARIADB_USER}
@@ -103,12 +103,17 @@ services:
     image: telegrambot
     container_name: telegrambot
     environment:
-      - TZ=America/Argentina/Buenos_Aires 
+      - TZ=America/Argentina/Buenos_Aires
+      - SERVIDOR=${SERVIDOR}
+      - TOPICO=${TOPICO} 
       - TB_TOKEN=${TB_TOKEN}
       - MARIADB_SERVER=${MARIADB_SERVER}
       - MARIADB_USER=${MARIADB_USER}
       - MARIADB_USER_PASS=${MARIADB_USER_PASS}
       - MARIADB_DB=${MARIADB_DB}
+      - MQTT_USR=${MQTT_USR}
+      - MQTT_PASS=${MQTT_PASS}
+      - PUERTO_MQTTS=${PUERTO_MQTTS}
     restart: unless-stopped
     depends_on:
       - mariadb
