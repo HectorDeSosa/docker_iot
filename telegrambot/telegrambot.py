@@ -22,8 +22,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         apellido=""
     kb = [["temperatura"],["humedad"],["gráfico temperatura"],["gráfico humedad"]]
     await context.bot.send_message(update.message.chat.id, text="Bienvenido al Bot "+ nombre + " " + apellido,reply_markup=ReplyKeyboardMarkup(kb))
-    """ funciona
-    #una ves conectado estaria bueno que empiece arecibir todo lo que se publica 
+    """ #funciona 
+    #una ves conectado estaria bueno que empiece a recibir todo lo que se publica 
     #el el topico hector/#
     tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     tls_context.verify_mode = ssl.CERT_REQUIRED
@@ -68,28 +68,34 @@ async def topicos(update: Update, context):
         tls_context=tls_context,
     ) as client:
         #con el formato /setpoint 30.5
-       
+        #separo lo que llega
         topico,msg=update.message.text.split()
-        topico=topico[1:]
+        topico=topico[1:] #saca la barra /
         logging.info(f"{topico}: {msg}")
 
 
         if topico == "setpoint":
             #condicion de que la temperatura sea mayor a 0°C
             #si se quiere se puede cambiar esta temperatura
-            #seria un ejemplo
-            if float(msg) > 0.0:
-                await client.publish(topic=topico, payload=msg , qos=1)
-                await context.bot.send_message(update.message.chat.id, text="setpoint correcto")
-            else:
-                await context.bot.send_message(update.message.chat.id, text="setpoint incorrecto")
+            #pongo un try por si no puede convertir
+            try:
+                if float(msg) > 0.0:
+                    await client.publish(topic=topico, payload=msg , qos=1)
+                    await context.bot.send_message(update.message.chat.id, text="setpoint correcto")
+                else:
+                    await context.bot.send_message(update.message.chat.id, text="setpoint incorrecto")
+            except ValueError:
+                await context.bot.send_message(update.message.chat.id, text="argumento incorrecto")
         elif topico == "periodo":
             #condicion de que el periodo sea mayor a cero
-            if float(msg) > 0.0:
-                await client.publish(topic=topico, payload=msg , qos=1)
-                await context.bot.send_message(update.message.chat.id, text="periodo correcto")
-            else:
-                await context.bot.send_message(update.message.chat.id, text="periodo incorrecto")
+            try:
+                if float(msg) > 0.0:
+                    await client.publish(topic=topico, payload=msg , qos=1)
+                    await context.bot.send_message(update.message.chat.id, text="periodo correcto")
+                else:
+                    await context.bot.send_message(update.message.chat.id, text="periodo incorrecto")
+            except ValueError:
+                await context.bot.send_message(update.message.chat.id, text="argumento incorrecto")
         elif topico == "modo":
             #modo puede ser auto/manual
             if msg in ["auto", "manual"]:
