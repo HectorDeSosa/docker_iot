@@ -69,11 +69,13 @@ async def topicos(update: Update, context):
     ) as client:
         #con el formato /setpoint 30.5
         #separo lo que llega
-        topico,msg=update.message.text.split()
+        topico,msg=update.message.text.split(' ',1)
         topico=topico[1:] #saca la barra /
         logging.info(f"{topico}: {msg}")
-
-
+        #si el mensaje es por ejemplo /setpoint 22.3 hoo
+        if len(msg.split())!=1:
+            await context.bot.send_message(update.message.chat.id, text="argumento incorrecto")
+            return
         if topico == "setpoint":
             #condicion de que la temperatura sea mayor a 0°C
             #si se quiere se puede cambiar esta temperatura
