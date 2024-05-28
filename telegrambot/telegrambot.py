@@ -68,16 +68,14 @@ async def topicos(update: Update, context):
         tls_context=tls_context,
     ) as client:
         #con el formato /setpoint 30.5
-        #aca el problema es si pongo mas de 1 argumento
-        #/setpoint 30.5 hola
-        
+       
         topico,msg=update.message.text.split()
         topico=topico[1:]
         logging.info(f"{topico}: {msg}")
 
 
         if topico == "setpoint":
-            #condicion de que la temperatura sea mayor a -5°C
+            #condicion de que la temperatura sea mayor a 0°C
             #si se quiere se puede cambiar esta temperatura
             #seria un ejemplo
             if float(msg) > 0.0:
