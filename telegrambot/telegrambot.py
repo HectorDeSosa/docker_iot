@@ -22,6 +22,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         apellido=""
     kb = [["temperatura"],["humedad"],["gráfico temperatura"],["gráfico humedad"]]
     await context.bot.send_message(update.message.chat.id, text="Bienvenido al Bot "+ nombre + " " + apellido,reply_markup=ReplyKeyboardMarkup(kb))
+    """ funciona
     #una ves conectado estaria bueno que empiece arecibir todo lo que se publica 
     #el el topico hector/#
     tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
@@ -41,6 +42,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await context.bot.send_message(update.message.chat.id, 
                 text=str(message.topic) + ": " + message.payload.decode("utf-8"))
             #logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
+"""
 async def acercade(update: Update, context):
     await context.bot.send_message(update.message.chat.id, text="Este bot fue creado para el curso de IoT FIO")
 """
@@ -65,46 +67,47 @@ async def topicos(update: Update, context):
         port=int(os.environ["PUERTO_MQTTS"]),
         tls_context=tls_context,
     ) as client:
-        logging.info(context.args)
         #con el formato /setpoint 30.5
         #aca el problema es si pongo mas de 1 argumento
         #/setpoint 30.5 hola
-        topic,msg=update.message.text.split(' ',1)
-        if msg.split() != 1:
-            await context.bot.send_message(update.message.chat.id, text="datos incorrectos")
-            return    
-        if topic == "/setpoint":
+        
+        topico,msg=update.message.text.split()
+        topico=topico[1:]
+        logging.info(f"{topico}: {msg}")
+
+
+        if topico == "setpoint":
             #condicion de que la temperatura sea mayor a -5°C
             #si se quiere se puede cambiar esta temperatura
             #seria un ejemplo
-            if float(msg) > -5.0:
-                client.publish("setpoint", msg)
+            if float(msg) > 0.0:
+                await client.publish(topic=topico, payload=msg , qos=1)
                 await context.bot.send_message(update.message.chat.id, text="setpoint correcto")
             else:
                 await context.bot.send_message(update.message.chat.id, text="setpoint incorrecto")
-        elif update.message.text == "periodo":
+        elif topico == "periodo":
             #condicion de que el periodo sea mayor a cero
-            if float(context.args) and float(context.args[0]) > 0.0:
-                client.publish("periodo", str(context.args[0]))
+            if float(msg) > 0.0:
+                await client.publish(topic=topico, payload=msg , qos=1)
                 await context.bot.send_message(update.message.chat.id, text="periodo correcto")
             else:
                 await context.bot.send_message(update.message.chat.id, text="periodo incorrecto")
-        elif update.message.text == "modo":
+        elif topico == "modo":
             #modo puede ser auto/manual
-            if context.args and context.args[0] in ["auto", "manual"]:
-                client.publish("modo", context.args[0])
+            if msg in ["auto", "manual"]:
+                await client.publish(topic=topico, payload=msg , qos=1)
                 await context.bot.send_message(update.message.chat.id, text="modo correcto")
             else:
                 await context.bot.send_message(update.message.chat.id, text="modo incorrecto")
-        elif update.message.text == "destello":
-            if context.args and context.args[0] in ["ON", "OFF"]:
-                client.publish("destello", context.args[0])
+        elif topico == "destello":
+            if msg in ["ON", "OFF"]:
+                await client.publish(topic=topico, payload=msg , qos=1)
                 await context.bot.send_message(update.message.chat.id, text="destello correcto")
             else:
                 await context.bot.send_message(update.message.chat.id, text="destello incorrecto")  
-        elif update.message.text == "rele":
-            if context.args and context.args[0] in ["ON", "OFF"]:
-                client.publish("rele", context.args[0])
+        elif topico == "rele":
+            if msg in ["ON", "OFF"]:
+                await client.publish(topic=topico, payload=msg , qos=1)
                 await context.bot.send_message(update.message.chat.id, text="estado de rele correcto")
             else:
                 await context.bot.send_message(update.message.chat.id, text="estado de rele incorrecto")
