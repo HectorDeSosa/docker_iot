@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <title>FLASK CRUD 1.6</title>
   <!-- <link rel="stylesheet" href="https://bootswatch.com/5/cosmo/bootstrap.min.css"> -->
-  <link rel="stylesheet" href="https://bootswatch.com/5/darkly/bootstrap.min.css">
+  <link rel="stylesheet" href="https://bootswatch.com/5/litera/bootstrap.min.css">
   {% with messages = get_flashed_messages() %} {% if messages %}
   {% for message in messages %}
   <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -21,6 +21,14 @@
       <div class="d-flex">
         <div class="nav-item pe-3 pt-2">{{ session.get("user_id") }}</div>
         <a href="{{url_for('logout')}}" class="btn btn-secondary my-2 my-sm-0" type="submit">Salir</a>
+        <a class="nav-link dropdown-toggle show" data-bs-toggle="dropdown" href="#" id="themes" aria-expanded="true">Themes</a>
+          Themes
+        </a>
+        <div class="dropdown-menu show" aria-labelledby="themes" data-bs-popper="static">
+          <a class="dropdown-item" href="./default/">Default</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="https://bootswatch.com/5/darkly/bootstrap.min.css">darkly</a>
+          <a class="dropdown-item" href="https://bootswatch.com/5/litera/bootstrap.min.css">Linterna</a> 
       </div>
       {% endif %}
     </div>
