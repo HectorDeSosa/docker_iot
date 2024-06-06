@@ -18,7 +18,7 @@ app.config["MYSQL_USER"] = os.environ["MYSQL_USER"]
 app.config["MYSQL_PASSWORD"] = os.environ["MYSQL_PASSWORD"]
 app.config["MYSQL_DB"] = os.environ["MYSQL_DB"]
 app.config["MYSQL_HOST"] = os.environ["MYSQL_HOST"]
-app.config['PERMANENT_SESSION_LIFETIME']=20
+app.config['PERMANENT_SESSION_LIFETIME']=600
 mysql = MySQL(app)
 
 # rutas
@@ -121,7 +121,7 @@ def borrar_contacto(id):
 @require_login
 def conseguir_contacto(id):
     cur = mysql.connection.cursor()
-    cur.execute('SELECT * FROM contactos WHERE id = %s', (id))
+    cur.execute('SELECT * FROM contactos WHERE id = %s', (id,))
     datos = cur.fetchone()
     logging.info(datos)
     return render_template('editar-contacto.html', contacto = datos)
