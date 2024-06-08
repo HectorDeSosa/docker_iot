@@ -13,6 +13,18 @@ app.wsgi_app = ProxyFix(
     app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
 )
 
+tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+tls_context.verify_mode = ssl.CERT_REQUIRED
+tls_context.check_hostname = True
+tls_context.load_default_certs()
+async with aiomqtt.Client(
+    os.environ["SERVIDOR"],
+    username=os.environ["MQTT_USR"],
+    password=os.environ["MQTT_PASS"],
+    port=int(os.environ["PUERTO_MQTTS"]),
+    tls_context=tls_context,
+) as client:
+
 app.secret_key = os.environ["FLASK_SECRET_KEY"]
 app.config["MYSQL_USER"] = os.environ["MYSQL_USER"]
 app.config["MYSQL_PASSWORD"] = os.environ["MYSQL_PASSWORD"]
@@ -88,6 +100,7 @@ def index():
     cur.close()
     return render_template('index.html', contactos = datos)
 
+#no se usa
 @app.route('/add_contact', methods=['POST'])
 @require_login
 def add_contact():
