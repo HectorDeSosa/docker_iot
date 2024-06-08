@@ -1,4 +1,4 @@
-
+//no se usa
 const btnDelete= document.querySelectorAll('.btn-borrar');
 if(btnDelete) {
   const btnArray = Array.from(btnDelete);
