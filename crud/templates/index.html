@@ -3,6 +3,38 @@
 <div class="row">
   <div class="col-md-7 mx-auto">
     <div class="card card-body">
+      <div class="d-flex justify-content-center align-items-center vh-100">
+        <div class="form-container">
+            <form action="{{url_for('topicos')}}" method="POST">
+              <legend>Elegir ESP32</legend>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="esp1" name="esp" value="id1">
+                    <label class="form-check-label" for="esp1">ESP1</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="esp2" name="esp" value="id2">
+                    <label class="form-check-label" for="esp2">ESP2</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="esp3" name="esp" value="id3">
+                    <label class="form-check-label" for="esp3">ESP3</label>
+                </div>
+
+                <div class="form-group">
+                    <label for="number">Setpoint:</label>
+                    <input type="number" class="form-control" id="number" name="setpoint" min="1" max="100" step="0.01">
+                </div>
+                <button type="submit" class="btn btn-secondary" name="set">Submit</button>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" name="destello">Destello</button>
+                </div>
+            </form>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--
       <form action="{{url_for('add_contact')}}" method="POST">
         <legend>Cargar contacto</legend>
         <div class="form-group">
@@ -24,33 +56,5 @@
     </div>
   </div>
 </div>
-<div class="row pt-5 ">
-  <div class="col-md-7 mx-auto">
-    <table class="table table-hover table-default">
-      <thead>
-        <tr>
-          <th scope="col">ID</th>
-          <th scope="col">Nombre completo</th>
-          <th scope="col">teléfono</th>
-          <th scope="col">Email</th>
-          <th scope="col">acción</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for contacto in contactos %}
-        <tr>
-          <td>{{contacto.0}}</td>
-          <td>{{contacto.1}}</td>
-          <td>{{contacto.2}}</td>
-          <td>{{contacto.3}}</td>
-          <td>
-            <a href="{{url_for('conseguir_contacto',id=contacto.0)}}" class="btn btn-secondary">editar</a>
-            <a href="{{url_for('borrar_contacto',id=contacto.0)}}" class="btn btn-danger btn-borrar">borrar</a>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
+-->
 {% endblock %}

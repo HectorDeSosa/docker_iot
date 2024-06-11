@@ -118,6 +118,15 @@ services:
       context: ./crud
     container_name: crud
     environment:
+      - SERVIDOR=${SERVIDOR}
+      - TOPICO=${TOPICO} 
+      - TB_TOKEN=${TB_TOKEN}
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_USER_PASS=${MARIADB_USER_PASS}
+      - MARIADB_DB=${MARIADB_DB}
+      - MQTT_USR=${MQTT_USR}
+      - MQTT_PASS=${MQTT_PASS}
+      - PUERTO_MQTTS=${PUERTO_MQTTS}
       - MYSQL_USER=${CRUD_USER}
       - MYSQL_PASSWORD=${CRUD_PASS}
       - MYSQL_DB=${CRUD_DB}
