@@ -19,7 +19,7 @@ app.config["MYSQL_USER"] = os.environ["MYSQL_USER"]
 app.config["MYSQL_PASSWORD"] = os.environ["MYSQL_PASSWORD"]
 app.config["MYSQL_DB"] = os.environ["MYSQL_DB"]
 app.config["MYSQL_HOST"] = os.environ["MYSQL_HOST"]
-app.config['PERMANENT_SESSION_LIFETIME']=180
+app.config['PERMANENT_SESSION_LIFETIME']=600
 mysql = MySQL(app)
 
 # rutas
@@ -83,35 +83,32 @@ def login():
 @app.route('/')
 @require_login
 def index():
-    cur = mysql.connection.cursor()
-    cur.execute('SELECT * FROM contactos')
-    datos = cur.fetchall()
-    cur.close()
-    return render_template('index.html', contactos = datos)
+    return render_template('index.html')
 
 @app.route('/topicos', methods=['POST'])
 @require_login
-def topicos():
+async def topicos():
     if request.method == 'POST':
         tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
         tls_context.verify_mode = ssl.CERT_REQUIRED
         tls_context.check_hostname = True
         tls_context.load_default_certs()
-        with aiomqtt.Client(
+        async with aiomqtt.Client(
             os.environ["SERVIDOR"],
             username=os.environ["MQTT_USR"],
             password=os.environ["MQTT_PASS"],
             port=int(os.environ["PUERTO_MQTTS"]),
             tls_context=tls_context,
         ) as client:
-            client.publish(topic="setpoint", payload=request.form['setpoint'] , qos=1)
-            """
-            if request.form['set']:
-                client.publish(topic=request.form.get()+"/setpoint", payload=request.form['setpoint'] , qos=1)
-            elif request.form['destello']:
-                #publica un destello
-                client.publish(topic=request.form['id'], payload="ON", qos=1)
-            """
+            await client.connect()
+            await client.publish(topic="setpoint", payload=request.form['setpoint'] , qos=1)
+        """
+        if request.form['set']:
+            client.publish(topic=request.form.get()+"/setpoint", payload=request.form['setpoint'] , qos=1)
+        elif request.form['destello']:
+            #publica un destello
+            client.publish(topic=request.form['id'], payload="ON", qos=1)
+        """
     return redirect(url_for('index'))
 
 

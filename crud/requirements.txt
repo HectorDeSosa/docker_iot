@@ -1,3 +1,7 @@
 Flask==3.0.3
 flask-mysqldb==2.0.0
 gunicorn==22.0.0
+aiomysql==0.2.0
+aiomqtt==2.0.1
+certifi==2024.2.2
+environs==11.0.0
