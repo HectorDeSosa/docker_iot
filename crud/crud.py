@@ -7,7 +7,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import ssl, certifi, json, traceback
 import aiomqtt,asyncio
 logging.basicConfig(format='%(asctime)s - CRUD - %(levelname)s - %(message)s', level=logging.INFO)
-
+import paho.mqtt.client as mqtt
 app = Flask(__name__)
 
 app.wsgi_app = ProxyFix(
@@ -22,6 +22,17 @@ app.config["MYSQL_HOST"] = os.environ["MYSQL_HOST"]
 app.config['PERMANENT_SESSION_LIFETIME']=600
 mysql = MySQL(app)
 
+#cliente
+tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+tls_context.verify_mode = ssl.CERT_REQUIRED
+tls_context.check_hostname = True
+tls_context.load_default_certs()
+client= mqtt.Client(
+    os.environ["SERVIDOR"],
+    username=os.environ["MQTT_USR"],
+    password=os.environ["MQTT_PASS"],
+    port=int(os.environ["PUERTO_MQTTS"]),
+    tls_context=tls_context)
 # rutas
 
 def require_login(f):
@@ -85,24 +96,18 @@ def login():
 def index():
     return render_template('index.html')
 
-@app.route('/topicos', methods=['POST'])
+@app.route('/setpoint', methods=['POST'])
 @require_login
-async def topicos():
+def setpoint():
     if request.method == 'POST':
-        tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-        tls_context.verify_mode = ssl.CERT_REQUIRED
-        tls_context.check_hostname = True
-        tls_context.load_default_certs()
-        async with aiomqtt.Client(
-            os.environ["SERVIDOR"],
-            username=os.environ["MQTT_USR"],
-            password=os.environ["MQTT_PASS"],
-            port=int(os.environ["PUERTO_MQTTS"]),
-            tls_context=tls_context,
-        ) as client:
-            await client.connect()
-            await client.publish(topic="setpoint", payload=request.form['setpoint'] , qos=1)
+        logging.info(str(request.form['setpoint']))
+        client.connect()
+        client.publish('topico','setpoint')
+        client.disconnect()
         """
+        client.connect()
+        client.publish(topic="setpoint", payload=request.form['setpoint'] , qos=1)
+        ""
         if request.form['set']:
             client.publish(topic=request.form.get()+"/setpoint", payload=request.form['setpoint'] , qos=1)
         elif request.form['destello']:
@@ -111,8 +116,12 @@ async def topicos():
         """
     return redirect(url_for('index'))
 
-
-
+@app.route('/destello', methods=['POST'])
+@require_login
+def destello():
+    if request.method == 'POST':
+        logging.info('on')
+    return redirect(url_for('index'))
 #no se usa
 """
 @app.route('/add_contact', methods=['POST'])
