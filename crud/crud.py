@@ -22,17 +22,6 @@ app.config["MYSQL_HOST"] = os.environ["MYSQL_HOST"]
 app.config['PERMANENT_SESSION_LIFETIME']=600
 mysql = MySQL(app)
 
-#cliente
-tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-tls_context.verify_mode = ssl.CERT_REQUIRED
-tls_context.check_hostname = True
-tls_context.load_default_certs()
-client= mqtt.Client(
-    os.environ["SERVIDOR"],
-    username=os.environ["MQTT_USR"],
-    password=os.environ["MQTT_PASS"],
-    port=int(os.environ["PUERTO_MQTTS"]),
-    tls_context=tls_context)
 # rutas
 
 def require_login(f):
@@ -96,32 +85,46 @@ def login():
 def index():
     return render_template('index.html')
 
-@app.route('/setpoint', methods=['POST'])
+async def main():
+    tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+    tls_context.verify_mode = ssl.CERT_REQUIRED
+    tls_context.check_hostname = True
+    tls_context.load_default_certs()
+
+    async with aiomqtt.Client(
+        os.environ["SERVIDOR"],
+        username=os.environ["MQTT_USR"],
+        password=os.environ["MQTT_PASS"],
+        port=int(os.environ["PUERTO_MQTTS"]),
+        tls_context=tls_context,
+    ) as client:
+        #ver si se presiono el boton de enviar setpoint 
+        #los ids de los esp son de pruebas
+        if request.method == 'POST' and 'setbotton' in request.form:
+            await client.publish(topic=str(request.form['esp'])+'/setpoint', payload=str(request.form['setpoint']) , qos=1)
+            logging.info('setpoint: '+str(request.form['setpoint'])+': '+str(request.form['esp']))
+        else:
+            await client.publish(topic=str(request.form['esp'])+'/destello', payload='ON', qos=1)
+            logging.info('destello: '+'ON'+': '+str(request.form['esp']))
+@app.route('/topico', methods=['GET','POST'])
 @require_login
-def setpoint():
+def topico():
     if request.method == 'POST':
-        logging.info(str(request.form['setpoint']))
-        client.connect()
-        client.publish('topico','setpoint')
-        client.disconnect()
-        """
-        client.connect()
-        client.publish(topic="setpoint", payload=request.form['setpoint'] , qos=1)
-        ""
-        if request.form['set']:
-            client.publish(topic=request.form.get()+"/setpoint", payload=request.form['setpoint'] , qos=1)
-        elif request.form['destello']:
-            #publica un destello
-            client.publish(topic=request.form['id'], payload="ON", qos=1)
-        """
+        if not request.form.get("esp"):
+            return 'Seleccionar un nodo es obligatorio'
+        asyncio.run(main()) 
     return redirect(url_for('index'))
 
-@app.route('/destello', methods=['POST'])
+@app.route('/tema', methods=['GET','POST'])
 @require_login
-def destello():
+def tema():
     if request.method == 'POST':
-        logging.info('on')
+        if not request.form.get("temas"):
+            return 'Seleccionar un tema'
+        session["theme"]=request.form.get("temas")
+        logging.info("se establecio el tema: "+ request.form.get("temas"))
     return redirect(url_for('index'))
+
 #no se usa
 """
 @app.route('/add_contact', methods=['POST'])

@@ -6,30 +6,29 @@
       <div class="d-flex justify-content-center align-items-center vh-100">
         <div class="form-container">
           <legend>Elegir ESP32</legend>
+          <form action="{{url_for('topico')}}" method="POST">
             <div class="form-check">
-                <input type="radio" class="form-check-input" id="esp1" name="esp" value="id1">
+                <input type="radio" class="form-check-input" id="esp1" name="esp" value="fgkh4576hq">
                 <label class="form-check-label" for="esp1">ESP1</label>
             </div>
             <div class="form-check">
-                <input type="radio" class="form-check-input" id="esp2" name="esp" value="id2">
+                <input type="radio" class="form-check-input" id="esp2" name="esp" value="hkj56568g2">
                 <label class="form-check-label" for="esp2">ESP2</label>
             </div>
             <div class="form-check">
-                <input type="radio" class="form-check-input" id="esp3" name="esp" value="id3">
+                <input type="radio" class="form-check-input" id="esp3" name="esp" value="tr43fg652t">
                 <label class="form-check-label" for="esp3">ESP3</label>
             </div>
-            <form action="{{url_for('setpoint')}}" method="POST">
+
               <div class="form-group">
                   <label for="number">Setpoint:</label>
                   <input type="number" class="form-control" id="number" name="setpoint" min="1" max="100" step="0.01">
               </div>
-              <button type="submit" class="btn btn-secondary" name="set">Submit</button>
-            </form>
-            <form action="{{url_for('destello')}}" method="POST">
+              <button type="submit" class="btn btn-secondary" name="setbotton">Enviar Setpoint</button>
               <div class="form-group">
                 <button type="submit" class="btn btn-secondary" name="destello">Destello</button>
               </div>
-            </form>
+          </form>
         </div>
       </div>
     </div>
