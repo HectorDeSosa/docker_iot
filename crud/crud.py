@@ -5,9 +5,8 @@ from functools import wraps
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.security import check_password_hash, generate_password_hash
 import ssl, certifi, json, traceback
-import aiomqtt,asyncio
+import aiomqtt, asyncio
 logging.basicConfig(format='%(asctime)s - CRUD - %(levelname)s - %(message)s', level=logging.INFO)
-import paho.mqtt.client as mqtt
 app = Flask(__name__)
 
 app.wsgi_app = ProxyFix(
