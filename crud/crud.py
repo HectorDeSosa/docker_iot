@@ -88,6 +88,16 @@ def index():
     cur.close()
     return render_template('index.html', contactos = datos)
 
+@app.route('/tema', methods=['GET','POST'])
+@require_login
+def tema():
+    if request.method == 'POST':
+        if not request.form.get("temas"):
+            return 'Seleccionar un tema'
+        session["theme"]=request.form.get("temas")
+        logging.info("se establecio el tema: "+ request.form.get("temas"))
+    return redirect(url_for('index'))
+
 @app.route('/add_contact', methods=['POST'])
 @require_login
 def add_contact():
