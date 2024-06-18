@@ -1,0 +1,169 @@
+[
+    {
+        "id": "8c942d3e8cf8438a",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "ab46e365de4447bf",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "hectoriot2024.duckdns.org",
+        "port": "10862",
+        "tls": "",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": true,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "989dad796706894d",
+        "type": "inject",
+        "z": "8c942d3e8cf8438a",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "prueba",
+        "payload": "",
+        "payloadType": "date",
+        "x": 210,
+        "y": 780,
+        "wires": [
+            [
+                "c431f6c9f7905c05"
+            ]
+        ]
+    },
+    {
+        "id": "c431f6c9f7905c05",
+        "type": "debug",
+        "z": "8c942d3e8cf8438a",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "c7be96521280456a",
+        "type": "inject",
+        "z": "8c942d3e8cf8438a",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "prueba",
+        "payload": "",
+        "payloadType": "date",
+        "x": 190,
+        "y": 60,
+        "wires": [
+            [
+                "21cd4ca0bd5c363d"
+            ]
+        ]
+    },
+    {
+        "id": "21cd4ca0bd5c363d",
+        "type": "debug",
+        "z": "8c942d3e8cf8438a",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 400,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "b90d2b8603f1b610",
+        "type": "mqtt in",
+        "z": "8c942d3e8cf8438a",
+        "name": "",
+        "topic": "hector/#",
+        "qos": "1",
+        "datatype": "auto-detect",
+        "broker": "ab46e365de4447bf",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 200,
+        "y": 240,
+        "wires": [
+            [
+                "7a42a2b5ce21d751"
+            ]
+        ]
+    },
+    {
+        "id": "7a42a2b5ce21d751",
+        "type": "debug",
+        "z": "8c942d3e8cf8438a",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 420,
+        "y": 240,
+        "wires": []
+    }
+]
