@@ -96,32 +96,34 @@ async def main():
         password=os.environ["MQTT_PASS"],
         port=int(os.environ["PUERTO_MQTTS"]),
         tls_context=tls_context,
-    ) as client: 
-        if request.method == 'POST' and 'setbotton' in request.form:
-            if request.form['ventilador']=='vent1':
-                await client.publish(topic=str(request.form['ventilador'])+'/setpoint1', payload=str(request.form['setpoint']) , qos=1)
-            else:
-                await client.publish(topic=str(request.form['ventilador'])+'/setpoint2', payload=str(request.form['setpoint']) , qos=1)
-        elif request.method == 'POST' and 'encender' in request.form:
-            if request.form['ventilador']=='vent1':
-                await client.publish(topic=str(request.form['ventilador'])+'/rele1', payload='ON' , qos=1)
-            else:
-                await client.publish(topic=str(request.form['ventilador'])+'/rele2', payload='ON' , qos=1)
-        
-        elif request.method == 'POST' and 'apagar' in request.form:
-            if request.form['ventilador']=='vent1':
-                await client.publish(topic=str(request.form['ventilador'])+'/rele1', payload='OFF' , qos=1)
-            else:
-                await client.publish(topic=str(request.form['ventilador'])+'/rele2', payload='OFF' , qos=1)
-        elif request.method == 'POST' and 'modo' in request.form:
-            if request.form['ventilador']=='vent1':
-                await client.publish(topic=str(request.form['ventilador'])+'/modo1', payload=str(request.form['modosel']) , qos=1)
-            else:
-                await client.publish(topic=str(request.form['ventilador'])+'/modo2', payload=str(request.form['modosel']) , qos=1)
-        elif request.method == 'POST' and 'perbutton' in request.form:
-            await client.publish(topic=str(request.form['ventilador'])+'/periodo', payload=str(request.form['periodo']) , qos=1)
-        else:
-            logging.info('boton incorrecto')
+    ) as client:
+        try: 
+            if request.method == 'POST' and 'setbotton' in request.form:
+                if request.form['ventilador']=='vent1':
+                    await client.publish(topic='setpoint1', payload=str(request.form['setpoint']) , qos=1)
+                else:
+                    await client.publish(topic='setpoint2', payload=str(request.form['setpoint']) , qos=1)
+            elif request.method == 'POST' and 'encender' in request.form:
+                if request.form['ventilador']=='vent1':
+                    await client.publish(topic='rele1', payload='ON' , qos=1)
+                else:
+                    await client.publish(topic='rele2', payload='ON' , qos=1)
+            
+            elif request.method == 'POST' and 'apagar' in request.form:
+                if request.form['ventilador']=='vent1':
+                    await client.publish(topic='rele1', payload='OFF' , qos=1)
+                else:
+                    await client.publish(topic='rele2', payload='OFF' , qos=1)
+            elif request.method == 'POST' and 'modo' in request.form:
+                if request.form['ventilador']=='vent1':
+                    await client.publish(topic='modo1', payload=str(request.form['modosel']) , qos=1)
+                else:
+                    await client.publish(topic='modo2', payload=str(request.form['modosel']) , qos=1)
+            elif request.method == 'POST' and 'perbutton' in request.form:
+                await client.publish(topic='periodo', payload=str(request.form['periodo']) , qos=1)
+        except:
+            logging.info('Error en botones')
+            return "Error en los botones de control"
 
 
 @app.route('/topico', methods=['GET','POST'])
