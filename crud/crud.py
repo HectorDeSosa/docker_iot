@@ -98,27 +98,29 @@ async def main():
         tls_context=tls_context,
     ) as client: 
         if request.method == 'POST' and 'setbotton' in request.form:
-            if request.form['ventilador']=='ventilador 1':
+            if request.form['ventilador']=='vent1':
                 await client.publish(topic=str(request.form['ventilador'])+'/setpoint1', payload=str(request.form['setpoint']) , qos=1)
             else:
                 await client.publish(topic=str(request.form['ventilador'])+'/setpoint2', payload=str(request.form['setpoint']) , qos=1)
         elif request.method == 'POST' and 'encender' in request.form:
-            if request.form['ventilador']=='ventilador 1':
+            if request.form['ventilador']=='vent1':
                 await client.publish(topic=str(request.form['ventilador'])+'/rele1', payload='ON' , qos=1)
             else:
                 await client.publish(topic=str(request.form['ventilador'])+'/rele2', payload='ON' , qos=1)
         
         elif request.method == 'POST' and 'apagar' in request.form:
-            if request.form['ventilador']=='ventilador 1':
+            if request.form['ventilador']=='vent1':
                 await client.publish(topic=str(request.form['ventilador'])+'/rele1', payload='OFF' , qos=1)
             else:
                 await client.publish(topic=str(request.form['ventilador'])+'/rele2', payload='OFF' , qos=1)
         
         elif request.method == 'POST' and 'modo' in request.form:
-            if request.form['ventilador']=='ventilador 1':
-                await client.publish(topic=str(request.form['ventilador'])+'/modo1', payload=str(request.form['modo']) , qos=1)
+            if not request.form.get('modosel'):
+               return "Ingresar un modo es obligatorio" 
+            if request.form['ventilador']=='vent1':
+                await client.publish(topic=str(request.form['ventilador'])+'/modo1', payload=str(request.form['modosel']) , qos=1)
             else:
-                await client.publish(topic=str(request.form['ventilador'])+'/modo2', payload=str(request.form['modo']) , qos=1)
+                await client.publish(topic=str(request.form['ventilador'])+'/modo2', payload=str(request.form['modosel']) , qos=1)
         elif request.method == 'POST' and 'perbutton' in request.form:
             await client.publish(topic=str(request.form['ventilador'])+'/periodo', payload=str(request.form['periodo']) , qos=1)
         else:
