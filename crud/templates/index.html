@@ -1,52 +1,52 @@
 {% extends "layout.html" %}
 {% block body %}
-<div class="row">
-  <div class="col-md-7 mx-auto">
-    <div class="card card-body">
-      <div class="d-flex justify-content-center align-items-center vh-100">
-        <div class="form-container">
-          <legend>Elegir Ventilador</legend>
-          <form action="{{url_for('topico')}}" method="POST">
-            <div class="form-check">
-                <input type="radio" class="form-check-input" id="vent1" name="ventilador" value="vent1">
-                <label class="form-check-label" for="vent1">Ventilador1</label>
-            </div>
-            <div class="form-check">
-                <input type="radio" class="form-check-input" id="vent2" name="ventilador" value="vent2">
-                <label class="form-check-label" for="vent2">Ventilador1</label>
-            </div>
-            <div class="form-group">
-                <label for="number">Setpoint:</label>
-                <input type="number" class="form-control" id="number" name="setpoint" min="1" max="100" step="0.01">
-            </div>
-            <button type="submit" class="btn btn-secondary" name="setbotton">Enviar Setpoint</button>
-            <div class="form-group">
-              <button type="submit" class="btn btn-secondary" name="encender">Encender</button>
-            </div>
-            <div class="form-group">
-              <button type="submit" class="btn btn-secondary" name="apagar">Apagar</button>
-            </div>
-            <div class="form-group">
-              <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">Modo</button>
-            <div class="dropdown-menu">
-              <div class="form-check">
-                <input type="radio" class="form-check-input" id="auto" name="modo" value="auto">
-                <label class="form-check-label" for="auto">Automatico</label>
-              </div>
-              <div class="form-check">
-                <input type="radio" class="form-check-input" id="manual" name="modo" value="manual">
-                <label class="form-check-label" for="manual">Manual</label>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="number">Periodo:</label>
-              <input type="number" class="form-control" id="number" name="periodo" min="1" max="1000" step="1">
-          </div>
-          </form>
+<div class="container vh-100 d-flex justify-content-center align-items-center">
+  <div class="card card-body">
+    <legend class="text-center mb-4">Elegir Ventilador</legend>
+    <form action="{{url_for('topico')}}" method="POST">
+      <!-- Sección Ventilador -->
+      <div class="mb-3">
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="vent1" name="ventilador" value="vent1">
+          <label class="form-check-label" for="vent1">Ventilador1</label>
+        </div>
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="vent2" name="ventilador" value="vent2">
+          <label class="form-check-label" for="vent2">Ventilador2</label>
         </div>
       </div>
-    </div>
+
+      <!-- Sección Setpoint -->
+      <div class="form-group mb-3">
+        <label for="setpoint">Setpoint:</label>
+        <input type="number" class="form-control" id="setpoint" name="setpoint" min="1" max="100" step="0.01">
+      </div>
+      <button type="submit" class="btn btn-primary mb-3 w-100" name="setbotton">Enviar Setpoint</button>
+
+      <!-- Sección Controles -->
+      <div class="d-flex justify-content-between mb-3">
+        <button type="submit" class="btn btn-success" name="encender">Encender</button>
+        <button type="submit" class="btn btn-danger" name="apagar">Apagar</button>
+      </div>
+
+      <!-- Sección Modo -->
+      <div class="form-group mb-3">
+        <label for="modo" class="form-label">Seleccionar modo:</label>
+        <input class="form-control" list="modos" name="modo" id="modo">
+        <datalist id="modos">
+          <option value="Manual">
+          <option value="Automático">
+        </datalist>
+      </div>
+      <button type="submit" class="btn btn-info mb-3 w-100" name="modo">Cambiar modo</button>
+
+      <!-- Sección Periodo -->
+      <div class="form-group mb-3">
+        <label for="periodo">Periodo:</label>
+        <input type="number" class="form-control" id="periodo" name="periodon" min="1" max="1000" step="1">
+      </div>
+      <button type="submit" class="btn btn-secondary w-100" name="perbutton">Enviar Periodo</button>
+    </form>
   </div>
 </div>
-
 {% endblock %}
