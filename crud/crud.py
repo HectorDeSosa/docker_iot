@@ -113,10 +113,7 @@ async def main():
                 await client.publish(topic=str(request.form['ventilador'])+'/rele1', payload='OFF' , qos=1)
             else:
                 await client.publish(topic=str(request.form['ventilador'])+'/rele2', payload='OFF' , qos=1)
-        
         elif request.method == 'POST' and 'modo' in request.form:
-            if not request.form.get('modosel'):
-               return "Ingresar un modo es obligatorio" 
             if request.form['ventilador']=='vent1':
                 await client.publish(topic=str(request.form['ventilador'])+'/modo1', payload=str(request.form['modosel']) , qos=1)
             else:
@@ -133,6 +130,9 @@ def topico():
     if request.method == 'POST':
         if not request.form.get("ventilador"):
             return 'Seleccionar un ventilador es obligatorio'
+        if 'modo' in request.form:
+            if not request.form.get('modosel'):
+                return "Ingresar un modo es obligatorio"
         asyncio.run(main()) 
     return redirect(url_for('index'))
 
