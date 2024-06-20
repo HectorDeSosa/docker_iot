@@ -5,29 +5,43 @@
     <div class="card card-body">
       <div class="d-flex justify-content-center align-items-center vh-100">
         <div class="form-container">
-          <legend>Elegir ESP32</legend>
+          <legend>Elegir Ventilador</legend>
           <form action="{{url_for('topico')}}" method="POST">
             <div class="form-check">
-                <input type="radio" class="form-check-input" id="esp1" name="esp" value="fgkh4576hq">
-                <label class="form-check-label" for="esp1">ESP1</label>
+                <input type="radio" class="form-check-input" id="vent1" name="ventilador" value="vent1">
+                <label class="form-check-label" for="vent1">Ventilador1</label>
             </div>
             <div class="form-check">
-                <input type="radio" class="form-check-input" id="esp2" name="esp" value="hkj56568g2">
-                <label class="form-check-label" for="esp2">ESP2</label>
+                <input type="radio" class="form-check-input" id="vent2" name="ventilador" value="vent2">
+                <label class="form-check-label" for="vent2">Ventilador1</label>
             </div>
-            <div class="form-check">
-                <input type="radio" class="form-check-input" id="esp3" name="esp" value="tr43fg652t">
-                <label class="form-check-label" for="esp3">ESP3</label>
+            <div class="form-group">
+                <label for="number">Setpoint:</label>
+                <input type="number" class="form-control" id="number" name="setpoint" min="1" max="100" step="0.01">
             </div>
-
-              <div class="form-group">
-                  <label for="number">Setpoint:</label>
-                  <input type="number" class="form-control" id="number" name="setpoint" min="1" max="100" step="0.01">
+            <button type="submit" class="btn btn-secondary" name="setbotton">Enviar Setpoint</button>
+            <div class="form-group">
+              <button type="submit" class="btn btn-secondary" name="encender">Encender</button>
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-secondary" name="apagar">Apagar</button>
+            </div>
+            <div class="form-group">
+              <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">Modo</button>
+            <div class="dropdown-menu">
+              <div class="form-check">
+                <input type="radio" class="form-check-input" id="auto" name="modo" value="auto">
+                <label class="form-check-label" for="auto">Automatico</label>
               </div>
-              <button type="submit" class="btn btn-secondary" name="setbotton">Enviar Setpoint</button>
-              <div class="form-group">
-                <button type="submit" class="btn btn-secondary" name="destello">Destello</button>
+              <div class="form-check">
+                <input type="radio" class="form-check-input" id="manual" name="modo" value="manual">
+                <label class="form-check-label" for="manual">Manual</label>
               </div>
+            </div>
+            <div class="form-group">
+              <label for="number">Periodo:</label>
+              <input type="number" class="form-control" id="number" name="periodo" min="1" max="1000" step="1">
+          </div>
           </form>
         </div>
       </div>
