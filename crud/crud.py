@@ -18,7 +18,7 @@ app.config["MYSQL_USER"] = os.environ["MYSQL_USER"]
 app.config["MYSQL_PASSWORD"] = os.environ["MYSQL_PASSWORD"]
 app.config["MYSQL_DB"] = os.environ["MYSQL_DB"]
 app.config["MYSQL_HOST"] = os.environ["MYSQL_HOST"]
-app.config['PERMANENT_SESSION_LIFETIME']=600
+app.config['PERMANENT_SESSION_LIFETIME']=300
 mysql = MySQL(app)
 
 # rutas
@@ -96,21 +96,41 @@ async def main():
         password=os.environ["MQTT_PASS"],
         port=int(os.environ["PUERTO_MQTTS"]),
         tls_context=tls_context,
-    ) as client:
-        #ver si se presiono el boton de enviar setpoint 
-        #los ids de los esp son de pruebas
+    ) as client: 
         if request.method == 'POST' and 'setbotton' in request.form:
-            await client.publish(topic=str(request.form['esp'])+'/setpoint', payload=str(request.form['setpoint']) , qos=1)
-            logging.info('setpoint: '+str(request.form['setpoint'])+': '+str(request.form['esp']))
+            if request.form['ventilador']=='ventilador 1':
+                await client.publish(topic=str(request.form['ventilador'])+'/setpoint1', payload=str(request.form['setpoint']) , qos=1)
+            else:
+                await client.publish(topic=str(request.form['ventilador'])+'/setpoint2', payload=str(request.form['setpoint']) , qos=1)
+        elif request.method == 'POST' and 'encender' in request.form:
+            if request.form['ventilador']=='ventilador 1':
+                await client.publish(topic=str(request.form['ventilador'])+'/rele1', payload='ON' , qos=1)
+            else:
+                await client.publish(topic=str(request.form['ventilador'])+'/rele2', payload='ON' , qos=1)
+        
+        elif request.method == 'POST' and 'apagar' in request.form:
+            if request.form['ventilador']=='ventilador 1':
+                await client.publish(topic=str(request.form['ventilador'])+'/rele1', payload='OFF' , qos=1)
+            else:
+                await client.publish(topic=str(request.form['ventilador'])+'/rele2', payload='OFF' , qos=1)
+        
+        elif request.method == 'POST' and 'modo' in request.form:
+            if request.form['ventilador']=='ventilador 1':
+                await client.publish(topic=str(request.form['ventilador'])+'/modo1', payload=str(request.form['modo']) , qos=1)
+            else:
+                await client.publish(topic=str(request.form['ventilador'])+'/modo2', payload=str(request.form['modo']) , qos=1)
+        elif request.method == 'POST' and 'perbutton' in request.form:
+            await client.publish(topic=str(request.form['ventilador'])+'/periodo', payload=str(request.form['periodo']) , qos=1)
         else:
-            await client.publish(topic=str(request.form['esp'])+'/destello', payload='ON', qos=1)
-            logging.info('destello: '+'ON'+': '+str(request.form['esp']))
+            logging.info('boton incorrecto')
+
+
 @app.route('/topico', methods=['GET','POST'])
 @require_login
 def topico():
     if request.method == 'POST':
-        if not request.form.get("esp"):
-            return 'Seleccionar un nodo es obligatorio'
+        if not request.form.get("ventilador"):
+            return 'Seleccionar un ventilador es obligatorio'
         asyncio.run(main()) 
     return redirect(url_for('index'))
 
