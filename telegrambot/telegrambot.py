@@ -45,16 +45,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 """
 async def acercade(update: Update, context):
     await context.bot.send_message(update.message.chat.id, text="Este bot fue creado para el curso de IoT FIO")
-"""
-async def kill(update: Update, context):
-    logging.info(context.args)
-    if context.args and context.args[0] == '@e':
-        await context.bot.send_animation(update.message.chat.id, "CgACAgEAAxkBAAOPZkuctzsWZVlDSNoP9PavSZmH5poAAmUCAALrx0lEVKaX7K-68Ns1BA")
-        await asyncio.sleep(6)
-        await context.bot.send_message(update.message.chat.id, text="¡¡¡Ahora estan todos muertos!!!")
-    else:
-        await context.bot.send_message(update.message.chat.id, text="☠️ ¡¡¡Esto es muy peligroso!!! ☠️")
-"""
+
 async def topicos(update: Update, context):
     tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     tls_context.verify_mode = ssl.CERT_REQUIRED
@@ -76,10 +67,7 @@ async def topicos(update: Update, context):
         if len(msg.split())!=1:
             await context.bot.send_message(update.message.chat.id, text="argumento incorrecto")
             return
-        if topico == "setpoint":
-            #condicion de que la temperatura sea mayor a 0°C
-            #si se quiere se puede cambiar esta temperatura
-            #pongo un try por si no puede convertir
+        if topico == "setpoint1":
             try:
                 if float(msg) > 0.0:
                     await client.publish(topic=topico, payload=msg , qos=1)
@@ -88,6 +76,16 @@ async def topicos(update: Update, context):
                     await context.bot.send_message(update.message.chat.id, text="setpoint incorrecto")
             except ValueError:
                 await context.bot.send_message(update.message.chat.id, text="argumento incorrecto")
+        elif topico == "setpoint2":
+            try:
+                if float(msg) > 0.0:
+                    await client.publish(topic=topico, payload=msg , qos=1)
+                    await context.bot.send_message(update.message.chat.id, text="setpoint correcto")
+                else:
+                    await context.bot.send_message(update.message.chat.id, text="setpoint incorrecto")
+            except ValueError:
+                await context.bot.send_message(update.message.chat.id, text="argumento incorrecto")
+                
         elif topico == "periodo":
             #condicion de que el periodo sea mayor a cero
             try:
@@ -98,20 +96,27 @@ async def topicos(update: Update, context):
                     await context.bot.send_message(update.message.chat.id, text="periodo incorrecto")
             except ValueError:
                 await context.bot.send_message(update.message.chat.id, text="argumento incorrecto")
-        elif topico == "modo":
+        elif topico == "modo1":
             #modo puede ser auto/manual
             if msg in ["auto", "manual"]:
                 await client.publish(topic=topico, payload=msg , qos=1)
                 await context.bot.send_message(update.message.chat.id, text="modo correcto")
             else:
                 await context.bot.send_message(update.message.chat.id, text="modo incorrecto")
-        elif topico == "destello":
+        elif topico == "modo2":
+            #modo puede ser auto/manual
+            if msg in ["auto", "manual"]:
+                await client.publish(topic=topico, payload=msg , qos=1)
+                await context.bot.send_message(update.message.chat.id, text="modo correcto")
+            else:
+                await context.bot.send_message(update.message.chat.id, text="modo incorrecto")
+        elif topico == "rele1":
             if msg in ["ON", "OFF"]:
                 await client.publish(topic=topico, payload=msg , qos=1)
-                await context.bot.send_message(update.message.chat.id, text="destello correcto")
+                await context.bot.send_message(update.message.chat.id, text="estado de rele correcto")
             else:
-                await context.bot.send_message(update.message.chat.id, text="destello incorrecto")  
-        elif topico == "rele":
+                await context.bot.send_message(update.message.chat.id, text="estado de rele incorrecto")                   
+        elif topico == "rele2":
             if msg in ["ON", "OFF"]:
                 await client.publish(topic=topico, payload=msg , qos=1)
                 await context.bot.send_message(update.message.chat.id, text="estado de rele correcto")
@@ -170,11 +175,13 @@ def main():
     application.add_handler(CommandHandler('start', start))
     application.add_handler(CommandHandler('acercade', acercade))
     #application.add_handler(CommandHandler('kill', kill))
-    application.add_handler(CommandHandler('setpoint', topicos))
+    application.add_handler(CommandHandler('setpoint1', topicos))
+    application.add_handler(CommandHandler('setpoint1', topicos))
     application.add_handler(CommandHandler('periodo', topicos))
-    application.add_handler(CommandHandler('modo', topicos))
-    application.add_handler(CommandHandler('destello', topicos))
-    application.add_handler(CommandHandler('rele', topicos))
+    application.add_handler(CommandHandler('modo1', topicos))
+    application.add_handler(CommandHandler('modo2', topicos))
+    application.add_handler(CommandHandler('rele1', topicos))
+    application.add_handler(CommandHandler('rele2', topicos))
     application.add_handler(MessageHandler(filters.Regex("^(temperatura|humedad)$"), medicion))
     application.add_handler(MessageHandler(filters.Regex("^(gráfico temperatura|gráfico humedad)$"), graficos))
     application.run_polling()
