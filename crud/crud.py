@@ -148,59 +148,6 @@ def tema():
         logging.info("se establecio el tema: "+ request.form.get("temas"))
     return redirect(url_for('index'))
 
-#no se usa
-"""
-@app.route('/add_contact', methods=['POST'])
-@require_login
-def add_contact():
-    if request.method == 'POST':
-        nombre = request.form['nombre']
-        tel = request.form['tel']
-        email = request.form['email']
-        cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO contactos (nombre, tel, email) VALUES (%s,%s,%s)"
-                    , (nombre, tel, email))
-        if mysql.connection.affected_rows():
-            flash('Se agregó un contacto')  # usa sesión
-            logging.info("se agregó un contacto")
-            mysql.connection.commit()
-    return redirect(url_for('index'))
-
-@app.route('/borrar/<string:id>', methods = ['GET'])
-@require_login
-def borrar_contacto(id):
-    cur = mysql.connection.cursor()
-    cur.execute('DELETE FROM contactos WHERE id = {0}'.format(id))
-    if mysql.connection.affected_rows():
-        flash('Se eliminó un contacto')  # usa sesión
-        logging.info("se eliminó un contacto")
-        mysql.connection.commit()
-    return redirect(url_for('index'))
-
-@app.route('/editar/<id>', methods = ['GET'])
-@require_login
-def conseguir_contacto(id):
-    cur = mysql.connection.cursor()
-    cur.execute('SELECT * FROM contactos WHERE id = %s', (id,))
-    datos = cur.fetchone()
-    logging.info(datos)
-    return render_template('editar-contacto.html', contacto = datos)
-
-@app.route('/actualizar/<id>', methods=['POST'])
-@require_login
-def actualizar_contacto(id):
-    if request.method == 'POST':
-        nombre = request.form['nombre']
-        tel = request.form['tel']
-        email = request.form['email']
-        cur = mysql.connection.cursor()
-        cur.execute("UPDATE contactos SET nombre=%s, tel=%s, email=%s WHERE id=%s", (nombre, tel, email, id))
-    if mysql.connection.affected_rows():
-        flash('Se actualizó un contacto')  # usa sesión
-        logging.info("se actualizó un contacto")
-        mysql.connection.commit()
-    return redirect(url_for('index'))
-"""
 @app.route("/logout")
 @require_login
 def logout():
