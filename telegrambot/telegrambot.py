@@ -98,14 +98,14 @@ async def topicos(update: Update, context):
                 await context.bot.send_message(update.message.chat.id, text="argumento incorrecto")
         elif topico == "modo1":
             #modo puede ser auto/manual
-            if msg in ["auto", "manual"]:
+            if msg in ["automatico", "manual"]:
                 await client.publish(topic=topico, payload=msg , qos=1)
                 await context.bot.send_message(update.message.chat.id, text="modo correcto")
             else:
                 await context.bot.send_message(update.message.chat.id, text="modo incorrecto")
         elif topico == "modo2":
             #modo puede ser auto/manual
-            if msg in ["auto", "manual"]:
+            if msg in ["automatico", "manual"]:
                 await client.publish(topic=topico, payload=msg , qos=1)
                 await context.bot.send_message(update.message.chat.id, text="modo correcto")
             else:
@@ -174,9 +174,8 @@ def main():
     application = Application.builder().token(token).build()
     application.add_handler(CommandHandler('start', start))
     application.add_handler(CommandHandler('acercade', acercade))
-    #application.add_handler(CommandHandler('kill', kill))
     application.add_handler(CommandHandler('setpoint1', topicos))
-    application.add_handler(CommandHandler('setpoint1', topicos))
+    application.add_handler(CommandHandler('setpoint2', topicos))
     application.add_handler(CommandHandler('periodo', topicos))
     application.add_handler(CommandHandler('modo1', topicos))
     application.add_handler(CommandHandler('modo2', topicos))
