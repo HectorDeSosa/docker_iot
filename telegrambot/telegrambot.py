@@ -41,7 +41,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             #ver si funciona
             await context.bot.send_message(update.message.chat.id, 
                 text=str(message.topic) + ": " + message.payload.decode("utf-8"))
-            #logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
+            logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
 
 async def acercade(update: Update, context):
     await context.bot.send_message(update.message.chat.id, text="Este bot fue creado para el curso de IoT FIO")
