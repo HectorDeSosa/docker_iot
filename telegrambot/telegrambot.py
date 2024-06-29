@@ -22,9 +22,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         apellido=""
     kb = [["temperatura"],["humedad"],["gráfico temperatura"],["gráfico humedad"]]
     await context.bot.send_message(update.message.chat.id, text="Bienvenido al Bot "+ nombre + " " + apellido,reply_markup=ReplyKeyboardMarkup(kb))
-    #funciona 
-    #una ves conectado estaria bueno que empiece a recibir todo lo que se publica 
-    #el el topico hector/#
     tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     tls_context.verify_mode = ssl.CERT_REQUIRED
     tls_context.check_hostname = True
@@ -38,7 +35,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ) as client:
         await client.subscribe(os.environ['TOPICO'])
         async for message in client.messages:
-            #ver si funciona
             await context.bot.send_message(update.message.chat.id, 
                 text=str(message.topic) + ": " + message.payload.decode("utf-8"))
             logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
