@@ -33,6 +33,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         port=int(os.environ["PUERTO_MQTTS"]),
         tls_context=tls_context,
     ) as client:
+        logging.info("cliente")
         await client.subscribe(os.environ['TOPICO'])
         async for message in client.messages:
             await context.bot.send_message(update.message.chat.id, 
