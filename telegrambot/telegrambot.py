@@ -21,7 +21,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         apellido=""
     kb = [["temperatura"],["humedad"],["gráfico temperatura"],["gráfico humedad"]]
-    await context.bot.send_message(update.message.chat.id, text="Bienvenido al Bot "+ nombre + " " + apellido,reply_markup=ReplyKeyboardMarkup(kb))
+    context.application.create_task(mqttx(context))
+    """
     tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     tls_context.verify_mode = ssl.CERT_REQUIRED
     tls_context.check_hostname = True
@@ -38,6 +39,27 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         async for message in client.messages:
             await context.bot.send_message(update.message.chat.id, 
                 text=str(message.topic) + ": " + message.payload.decode("utf-8"))
+            logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
+    """
+async def mqttx(context: ContextTypes.DEFAULT_TYPE):
+    tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+    tls_context.verify_mode = ssl.CERT_REQUIRED
+    tls_context.check_hostname = True
+    tls_context.load_default_certs()
+    async with aiomqtt.Client(
+        os.environ["SERVIDOR"],
+        username=os.environ["MQTT_USR"],
+        password=os.environ["MQTT_PASS"],
+        port=int(os.environ["PUERTO_MQTTS"]),
+        tls_context=tls_context,
+    ) as client:
+        logging.info("cliente MQTT conectado")
+        await client.subscribe(os.environ['TOPICO'])
+        async for message in client.messages:
+            await context.bot.send_message(
+                chat_id=context.job.context,
+                text=str(message.topic) + ": " + message.payload.decode("utf-8")
+            )
             logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
 
 async def acercade(update: Update, context):
