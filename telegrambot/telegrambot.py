@@ -21,27 +21,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         apellido=""
     kb = [["temperatura"],["humedad"],["gráfico temperatura"],["gráfico humedad"]]
+    #guardo el id 
     context.chat_data["chat_id"] = update.message.chat.id
     context.application.create_task(mqttx(context))
-    """
-    tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-    tls_context.verify_mode = ssl.CERT_REQUIRED
-    tls_context.check_hostname = True
-    tls_context.load_default_certs()
-    async with aiomqtt.Client(
-        os.environ["SERVIDOR"],
-        username=os.environ["MQTT_USR"],
-        password=os.environ["MQTT_PASS"],
-        port=int(os.environ["PUERTO_MQTTS"]),
-        tls_context=tls_context,
-    ) as client:
-        logging.info("cliente")
-        await client.subscribe(os.environ['TOPICO'])
-        async for message in client.messages:
-            await context.bot.send_message(update.message.chat.id, 
-                text=str(message.topic) + ": " + message.payload.decode("utf-8"))
-            logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
-    """
+#creo una funcion en segundo plano para que no bloquee el chat 
+#asi puede atender otros comandos
 async def mqttx(context: ContextTypes.DEFAULT_TYPE):
     tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     tls_context.verify_mode = ssl.CERT_REQUIRED
@@ -87,58 +71,24 @@ async def topicos(update: Update, context):
         if len(msg.split())!=1:
             await context.bot.send_message(update.message.chat.id, text="argumento incorrecto")
             return
-        if topico == "setpoint1":
+        if topico in ["setpoint1", "setpoint2", "periodo"]:
             try:
                 if float(msg) > 0.0:
-                    await client.publish(topic=topico, payload=msg , qos=1)
-                    await context.bot.send_message(update.message.chat.id, text="setpoint correcto")
+                    await client.publish(topic=topico, payload=msg, qos=1)
+                    await context.bot.send_message(update.message.chat.id, text=f"{topico} correcto")
                 else:
-                    await context.bot.send_message(update.message.chat.id, text="setpoint incorrecto")
+                    await context.bot.send_message(update.message.chat.id, text=f"{topico} incorrecto")
             except ValueError:
                 await context.bot.send_message(update.message.chat.id, text="argumento incorrecto")
-        elif topico == "setpoint2":
-            try:
-                if float(msg) > 0.0:
-                    await client.publish(topic=topico, payload=msg , qos=1)
-                    await context.bot.send_message(update.message.chat.id, text="setpoint correcto")
-                else:
-                    await context.bot.send_message(update.message.chat.id, text="setpoint incorrecto")
-            except ValueError:
-                await context.bot.send_message(update.message.chat.id, text="argumento incorrecto")
-                
-        elif topico == "periodo":
-            #condicion de que el periodo sea mayor a cero
-            try:
-                if float(msg) > 0.0:
-                    await client.publish(topic=topico, payload=msg , qos=1)
-                    await context.bot.send_message(update.message.chat.id, text="periodo correcto")
-                else:
-                    await context.bot.send_message(update.message.chat.id, text="periodo incorrecto")
-            except ValueError:
-                await context.bot.send_message(update.message.chat.id, text="argumento incorrecto")
-        elif topico == "modo1":
-            #modo puede ser auto/manual
+        elif topico in ["modo1", "modo2"]:
             if msg in ["automatico", "manual"]:
-                await client.publish(topic=topico, payload=msg , qos=1)
+                await client.publish(topic=topico, payload=msg, qos=1)
                 await context.bot.send_message(update.message.chat.id, text="modo correcto")
             else:
                 await context.bot.send_message(update.message.chat.id, text="modo incorrecto")
-        elif topico == "modo2":
-            #modo puede ser auto/manual
-            if msg in ["automatico", "manual"]:
-                await client.publish(topic=topico, payload=msg , qos=1)
-                await context.bot.send_message(update.message.chat.id, text="modo correcto")
-            else:
-                await context.bot.send_message(update.message.chat.id, text="modo incorrecto")
-        elif topico == "rele1":
+        elif topico in ["rele1", "rele2"]:
             if msg in ["ON", "OFF"]:
-                await client.publish(topic=topico, payload=msg , qos=1)
-                await context.bot.send_message(update.message.chat.id, text="estado de rele correcto")
-            else:
-                await context.bot.send_message(update.message.chat.id, text="estado de rele incorrecto")                   
-        elif topico == "rele2":
-            if msg in ["ON", "OFF"]:
-                await client.publish(topic=topico, payload=msg , qos=1)
+                await client.publish(topic=topico, payload=msg, qos=1)
                 await context.bot.send_message(update.message.chat.id, text="estado de rele correcto")
             else:
                 await context.bot.send_message(update.message.chat.id, text="estado de rele incorrecto")
