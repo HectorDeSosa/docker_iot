@@ -21,6 +21,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         apellido=""
     kb = [["temperatura"],["humedad"],["gráfico temperatura"],["gráfico humedad"]]
+    context.chat_data["chat_id"] = update.message.chat.id
     context.application.create_task(mqttx(context))
     """
     tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
@@ -57,7 +58,7 @@ async def mqttx(context: ContextTypes.DEFAULT_TYPE):
         await client.subscribe(os.environ['TOPICO'])
         async for message in client.messages:
             await context.bot.send_message(
-                chat_id=context.job.context,
+                chat_id=context.chat_data["chat_id"],
                 text=str(message.topic) + ": " + message.payload.decode("utf-8")
             )
             logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
