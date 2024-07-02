@@ -179,7 +179,7 @@ services:
       - SERVERPORT=${PUERTO}
       - PEERS=peer1,peer2   #cambiar
       - PEERDNS=auto
-      - INTERNAL_SUBNET=10.13.13.0 #optional
+      - INTERNAL_SUBNET=10.13.15.0 #optional
       - ALLOWEDIPS=0.0.0.0/0
       - PERSISTENTKEEPALIVE_PEERS=
       - LOG_CONFS=true
