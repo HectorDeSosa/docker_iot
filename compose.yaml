@@ -30,6 +30,7 @@ services:
       - TZ=America/Argentina/Buenos_Aires 
       - SERVIDOR=${SERVIDOR}
       - TOPICO=${TOPICO}
+      - TOPICO1=${TOPICO1} 
       - MARIADB_SERVER=${MARIADB_SERVER}
       - MARIADB_USER=${MARIADB_USER}
       - MARIADB_USER_PASS=${MARIADB_USER_PASS}
@@ -105,7 +106,8 @@ services:
     environment:
       - TZ=America/Argentina/Buenos_Aires
       - SERVIDOR=${SERVIDOR}
-      - TOPICO=${TOPICO} 
+      - TOPICO=${TOPICO}
+      - TOPICO1=${TOPICO1} 
       - TB_TOKEN=${TB_TOKEN}
       - MARIADB_SERVER=${MARIADB_SERVER}
       - MARIADB_USER=${MARIADB_USER}
