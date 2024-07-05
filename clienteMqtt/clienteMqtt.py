@@ -17,7 +17,7 @@ async def main():
         port=int(os.environ["PUERTO_MQTTS"]),
         tls_context=tls_context,
     ) as client:
-        await client.subscribe(os.environ['TOPICO'])
+        await client.subscribe(os.environ['TOPICO1'])
         async for message in client.messages:
             logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
             dispositivo=str(message.topic).split('/')[-1]
