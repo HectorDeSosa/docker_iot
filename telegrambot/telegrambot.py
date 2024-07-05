@@ -21,6 +21,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         apellido=""
     kb = [["temperatura"],["humedad"],["gráfico temperatura"],["gráfico humedad"]]
+    await context.bot.send_message(update.message.chat.id, text="Bienvenido al Bot "+ nombre + " " + apellido,reply_markup=ReplyKeyboardMarkup(kb))
     #guardo el id 
     context.chat_data["chat_id"] = update.message.chat.id
     context.application.create_task(mqttx(context))
@@ -39,7 +40,7 @@ async def mqttx(context: ContextTypes.DEFAULT_TYPE):
         tls_context=tls_context,
     ) as client:
         logging.info("cliente MQTT conectado")
-        await client.subscribe(os.environ['TOPICO'])
+        await client.subscribe(os.environ['TOPICO1'])
         async for message in client.messages:
             await context.bot.send_message(
                 chat_id=context.chat_data["chat_id"],
