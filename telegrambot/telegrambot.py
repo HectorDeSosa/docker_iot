@@ -30,7 +30,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def stop(update: Update, context):
     global stall
     stall=True
-    await context.bot.send_message(update.chat.id, "El cliente MQTT ha sido desconectado")
+    await context.bot.send_message(update.message.chat.id, "El cliente MQTT ha sido desconectado")
 #creo una funcion en segundo plano para que no bloquee el chat 
 #asi puede atender otros comandos
 async def mqttx(context: ContextTypes.DEFAULT_TYPE):
