@@ -9,8 +9,11 @@ import aiomqtt
 token=os.environ["TB_TOKEN"]
 
 logging.basicConfig(format='%(asctime)s - TelegramBot - %(levelname)s - %(message)s', level=logging.INFO)
-
+mqtt_client = None
+stall=False
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    global stall
+    stall=False
     logging.info("se conectó: " + str(update.message.from_user.id))
     if update.message.from_user.first_name:
         nombre=update.message.from_user.first_name
@@ -22,12 +25,25 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         apellido=""
     kb = [["temperatura"],["humedad"],["gráfico temperatura"],["gráfico humedad"]]
     await context.bot.send_message(update.message.chat.id, text="Bienvenido al Bot "+ nombre + " " + apellido,reply_markup=ReplyKeyboardMarkup(kb))
-    #guardo el id 
+    #keep the id 
     context.chat_data["chat_id"] = update.message.chat.id
-    context.application.create_task(mqttx(context))
+    asyncio.create_task(mqttx(context))
+async def stop(update: Update, context):
+    global mqtt_client,stall
+    stall=True
+    try:
+        if mqtt_client:
+            await mqtt_client.disconnect()
+            mqtt_client = None
+            await context.bot.send_message(update.chat.id, "El cliente MQTT ha sido desconectado")
+        else:  
+            await context.bot.send_message(update.chat.id, "El cliente MQTT ya ha sido desconectado")
+    except :
+        logging.info("Client disconnection error")
 #creo una funcion en segundo plano para que no bloquee el chat 
 #asi puede atender otros comandos
 async def mqttx(context: ContextTypes.DEFAULT_TYPE):
+    global mqtt_client,stall
     tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     tls_context.verify_mode = ssl.CERT_REQUIRED
     tls_context.check_hostname = True
@@ -39,15 +55,18 @@ async def mqttx(context: ContextTypes.DEFAULT_TYPE):
         port=int(os.environ["PUERTO_MQTTS"]),
         tls_context=tls_context,
     ) as client:
+        mqtt_client = client
         logging.info("cliente MQTT conectado")
         await client.subscribe(os.environ['TOPICO1'])
         async for message in client.messages:
+            if stall:
+                break
             await context.bot.send_message(
                 chat_id=context.chat_data["chat_id"],
                 text=str(message.topic) + ": " + message.payload.decode("utf-8")
             )
             logging.info(str(message.topic) + ": " + message.payload.decode("utf-8"))
-
+    logging.info("cliente MQTT desconectado")
 async def acercade(update: Update, context):
     await context.bot.send_message(update.message.chat.id, text="Este bot fue creado para el curso de IoT FIO")
 
@@ -145,6 +164,7 @@ def main():
     application = Application.builder().token(token).build()
     application.add_handler(CommandHandler('start', start))
     application.add_handler(CommandHandler('acercade', acercade))
+    application.add_handler(CommandHandler('stop', stop))    
     application.add_handler(CommandHandler('setpoint1', topicos))
     application.add_handler(CommandHandler('setpoint2', topicos))
     application.add_handler(CommandHandler('periodo', topicos))
