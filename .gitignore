@@ -147,3 +147,4 @@ swag/nginx/proxy-confs/*
 !swag/nginx/proxy-confs/crud.subfolder.conf
 !swag/nginx/proxy-confs/fastapi.subfolder.conf
 !swag/nginx/proxy-confs/nodered.subfolder.conf
+node-red/
