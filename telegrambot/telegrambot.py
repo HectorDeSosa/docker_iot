@@ -142,7 +142,7 @@ async def graficos(update: Update, context):
         ax.set_title(update.message.text, fontsize=14, verticalalignment='bottom')
         ax.set_xlabel('fecha')
         ax.set_ylabel('unidad')
-
+        ax.tick_params(axis='x', rotation=90)
         buffer = BytesIO()
         fig.tight_layout()
         fig.savefig(buffer, format='png')
