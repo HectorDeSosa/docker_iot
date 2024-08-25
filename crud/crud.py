@@ -130,7 +130,9 @@ async def main():
 @require_login
 def topico():
     if request.method == 'POST':
-        if not request.form.get("ventilador"):
+        if 'perbutton' in request.form:
+            pass
+        elif not request.form.get("ventilador"):
             return 'Seleccionar un ventilador es obligatorio'
         if 'modo' in request.form:
             if not request.form.get('modosel'):
